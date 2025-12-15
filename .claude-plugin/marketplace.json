@@ -1,0 +1,14 @@
+{
+  "name": "krakend",
+  "owner": {
+    "name": "KrakenD"
+  },
+  "plugins": [
+    {
+      "name": "krakend-ai-assistant",
+      "source": "./",
+      "description": "AI assistance for KrakenD API Gateway - validates configs, security audits, discovers features, and supports Flexible Configuration (CE & EE)",
+      "version": "0.6.1"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+# MCP Server binaries (managed by install script)
+servers/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Installation logs
+.install.log
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+.cache/
+
+# Node modules (if any tooling uses npm)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Test artifacts
+coverage/
+.nyc_output/

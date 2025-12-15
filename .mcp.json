@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "krakend": {
+      "type": "stdio",
+      "command": "${CLAUDE_PLUGIN_ROOT}/servers/krakend-mcp-server/krakend-mcp-server",
+      "args": [],
+      "description": "KrakenD MCP server for validation, feature detection, and configuration generation"
+    }
+  }
+}

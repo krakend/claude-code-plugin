@@ -1,0 +1,25 @@
+{
+  "name": "krakend-ai-assistant",
+  "version": "0.6.1",
+  "description": "AI assistance for KrakenD API Gateway configuration, validation, security auditing, and Flexible Configuration support",
+  "author": {
+    "name": "KrakenD",
+    "url": "https://github.com/krakend"
+  },
+  "homepage": "https://github.com/krakend/claude-code-plugin",
+  "repository": "https://github.com/krakend/claude-code-plugin",
+  "keywords": ["krakend", "api-gateway", "microservices", "configuration", "validation"],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/install-mcp.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}
