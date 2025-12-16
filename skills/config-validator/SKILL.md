@@ -8,72 +8,6 @@ description: Validates KrakenD configurations with specific error fixes, edition
 ## Purpose
 Validates KrakenD configurations with specific error fixes, edition compatibility checks, anti-pattern detection, and automatic Flexible Configuration support. Provides actionable feedback with line numbers and recommendations.
 
-## ⚠️ CRITICAL: Anti-Hallucination Guidelines (READ FIRST)
-
-**YOU MUST FOLLOW THESE RULES - NO EXCEPTIONS:**
-
-1. **ONLY fix errors explicitly listed in the validation output**
-   - The `validate_config` tool output is AUTHORITATIVE
-   - Do NOT suggest fixes based on assumptions, patterns, or intuition
-   - Do NOT add corrections that aren't in the error list
-
-2. **Read the `guidance` field in validation output**
-   - Every validation result includes a `guidance` field with specific instructions
-   - This field contains context-specific rules you MUST follow
-   - Treat guidance as binding requirements, not suggestions
-
-3. **When uncertain about KrakenD syntax:**
-   - ALWAYS use `search_documentation` tool to verify against official docs
-   - NEVER guess correct syntax based on patterns from other systems
-   - NEVER suggest "common fixes" that aren't documented
-
-4. **Example of WRONG behavior:**
-   - ❌ Validation says "unknown field: 'backend'" → You suggest changing it to "backends" (WRONG - this is hallucination)
-   - ❌ You see repeated patterns → You suggest "best practices" not in validation output (WRONG)
-   - ❌ Config looks incomplete → You add fields that "should be there" (WRONG)
-
-5. **Example of CORRECT behavior:**
-   - ✅ Validation says "missing field 'timeout'" → You suggest adding timeout field
-   - ✅ Validation says "invalid value for max_rate" → You fix that specific field
-   - ✅ Unsure about syntax → You use `search_documentation` to verify before suggesting
-
-**Remember:** KrakenD has specific, sometimes counter-intuitive syntax. Trust the validation tool output, not your intuition.
-
-## Flexible Configuration Support (IMPORTANT)
-
-This skill automatically detects and handles **Flexible Configuration** (FC):
-
-**What is Flexible Configuration?**
-KrakenD configurations can be split across multiple files using templates instead of a single `krakend.json`.
-
-**Two Variants:**
-
-1. **Community Edition (CE) Flexible Configuration:**
-   - Uses `.tmpl` files (e.g., `krakend.tmpl`)
-   - Requires environment variables: `FC_ENABLE=1`, `FC_SETTINGS`, `FC_TEMPLATES`, `FC_PARTIALS`
-   - Structure: `config/settings/`, `config/templates/`, `config/partials/`
-   - [Documentation](https://www.krakend.io/docs/configuration/flexible-config/)
-
-2. **Enterprise Edition (EE) Extended Flexible Configuration:**
-   - Uses `flexible_config.json` behavioral file
-   - No environment variables needed (simpler!)
-   - Supports multiple formats: JSON, YAML, TOML, INI, ENV, properties
-   - Structure: `environment/`, `settings/`, `templates/`, `partials/`
-   - [Documentation](https://www.krakend.io/docs/enterprise/configuration/flexible-config/)
-
-**This skill automatically:**
-- ✅ Detects FC by looking for `.tmpl` files, `flexible_config.json`, or typical directory structures
-- ✅ Identifies which variant (CE or EE)
-- ✅ Adjusts validation commands with correct environment variables (CE) or behavioral file (EE)
-- ✅ Reports FC detection in validation output with implications
-- ✅ Uses base template file instead of temporary files when FC is detected
-- ✅ Mounts entire project directory (not just config file) when using Docker with FC
-
-**User experience:**
-- Users don't need to configure anything - detection is automatic
-- Validation results will show FC detection info
-- All implications and requirements are explained in output
-
 ## When to activate
 - User asks to validate a KrakenD configuration
 - User mentions "check config", "validate krakend", "is this valid", "config errors"
@@ -82,31 +16,91 @@ KrakenD configurations can be split across multiple files using templates instea
 
 ## What this skill does
 
-1. **Reads the configuration file** (typically `krakend.json`)
+1. **Reads and parses** the configuration file (typically `krakend.json`)
 2. **Validates JSON syntax** with specific line/column error reporting
 3. **Checks edition compatibility** (Community vs Enterprise features)
 4. **Detects configuration issues** using smart three-tier validation:
    - Native `krakend check` if available (most accurate)
    - Docker-based validation if native unavailable
    - Go schema validation as fallback
-5. **Provides specific fixes** for each error found
-6. **Suggests best practices** and potential improvements
+5. **Auto-detects Flexible Configuration** (CE and EE variants)
+6. **Provides specific fixes** for each error found
+7. **Suggests best practices** and potential improvements
+
+## Critical Guidelines
+
+### Anti-Hallucination Rules
+
+**YOU MUST FOLLOW THESE RULES - NO EXCEPTIONS:**
+
+✅ **DO:**
+- Only fix errors explicitly listed in validation output
+- Read the `guidance` field in every validation result (contains binding instructions)
+- Use `search_documentation` tool when uncertain about KrakenD syntax
+- Trust validation output as authoritative
+
+❌ **DON'T:**
+- Suggest fixes based on assumptions, patterns, or intuition
+- Add corrections that aren't in the error list
+- Guess syntax based on patterns from other systems
+- Add fields that "should be there" without validation saying so
+
+**Example:**
+- ❌ WRONG: Validation says "unknown field: 'backend'" → You suggest "backends" (hallucination)
+- ✅ CORRECT: Validation says "missing field 'timeout'" → You suggest adding timeout
+
+### Flexible Configuration Awareness
+
+This skill automatically detects and handles **Flexible Configuration** (FC):
+
+**Community Edition FC:** Uses `.tmpl` files with environment variables
+**Enterprise Edition FC:** Uses `flexible_config.json` (simpler, no env vars needed)
+
+The skill auto-detects FC variant, adjusts validation commands, and reports FC detection in output. No user configuration needed.
 
 ## Tools used
-- `validate_config` - Complete validation (smart fallback: native KrakenD → Docker → schema)
-  - **Returns**: errors, warnings, summary, **guidance field** (MUST READ), environment info
-  - **Note**: The guidance field contains critical instructions for that specific validation
+
+- `validate_config` - Complete validation with smart 3-tier fallback (native → Docker → schema)
+  - Returns: errors, warnings, summary, **guidance field** (always read this)
 - `check_edition_compatibility` - Detect CE vs EE requirements
-- `search_documentation` - Find relevant docs for errors (USE THIS when unsure about syntax)
+- `search_documentation` - Verify syntax against official docs (use when unsure)
 - `list_features` - Query feature catalog if needed
 
-## Docker image information
-When discussing Docker deployment or validation:
-- **Community Edition**: Use `krakend:latest` (official image)
-- **Enterprise Edition**: Use `krakend/krakend-ee:latest` (requires KRAKEND_LICENSE_KEY)
-- **Deprecated**: `devopsfaith/krakend` (old), `krakend/krakend:latest` (use `krakend:latest` instead)
+## Validation Workflow
 
-Query the feature catalog with `list_features` to browse available features and check edition requirements.
+### Step 1: Check JSON Syntax
+Parse the configuration file to catch syntax errors early (missing commas, brackets, etc.)
+
+### Step 2: Run Validation
+Use `validate_config` tool which automatically:
+- Detects Flexible Configuration (CE or EE variant)
+- Determines required edition (CE or EE)
+- Selects best validation method (native → Docker → schema)
+- Infers version from `$schema` field
+- Checks for LICENSE file if EE features detected
+
+### Step 3: Check Edition Compatibility
+Use `check_edition_compatibility` to verify CE vs EE requirements and identify any Enterprise-only features.
+
+### Step 4: Present Results
+Show structured report with errors, warnings, edition info, and actionable fixes.
+
+### Execution Commands
+
+When showing users how to test their config, provide appropriate command based on: (1) Version from `$schema`, (2) Edition (CE/EE by features), (3) FC detection (.tmpl or flexible_config.json), (4) LICENSE file for EE, (5) Local binary availability.
+
+**Examples:**
+```bash
+# CE
+docker run --rm -v $(pwd):/etc/krakend krakend:VERSION check -tlc /etc/krakend/krakend.json
+
+# EE (LICENSE file in directory)
+docker run --rm -v $(pwd):/etc/krakend krakend/krakend-ee:VERSION check -tlc /etc/krakend/krakend.json
+```
+
+**Flags:** `-tlc` = test + lint + config (lint detects anti-patterns and best practices violations)
+**FC:** CE requires `FC_ENABLE=1` + env vars for settings/templates/partials; EE auto-detects via flexible_config.json.
+**Images:** Use `krakend:VERSION` (CE) or `krakend/krakend-ee:VERSION` (EE). Never use deprecated `devopsfaith/krakend` or `krakend/krakend`.
 
 ## Output format
 
@@ -152,15 +146,14 @@ Validated using: **Native KrakenD** (most accurate)
 
 ## Best practices
 
-1. **FIRST: Read the Anti-Hallucination Guidelines** - See critical section at top of this skill
-2. **ALWAYS read the `guidance` field** - Every validation output includes binding instructions
-3. **ONLY fix listed errors** - Do NOT suggest fixes based on assumptions or patterns
-4. **When uncertain: use `search_documentation`** - Verify syntax against official docs before suggesting
-5. **Always show location** - Use JSON paths (e.g., `$.endpoints[0].backend[0]`)
-6. **Be specific** - Don't just say "invalid", explain what's wrong and how to fix it
-7. **Prioritize errors** - Show critical errors first, warnings second
-8. **Link to docs** - Always include relevant documentation URLs
-9. **Suggest alternatives** - If a better, easier, more convenient feature is available at EE, softly suggest to use KrakenD Enterprise instead for that
+1. **Always read the `guidance` field** - Every validation output includes binding instructions for that specific validation
+2. **Only fix listed errors** - Do NOT suggest fixes based on assumptions or patterns
+3. **Use `search_documentation` when uncertain** - Verify syntax against official docs before suggesting
+4. **Show exact location** - Use JSON paths (e.g., `$.endpoints[0].backend[0]`)
+5. **Be specific** - Explain what's wrong and exactly how to fix it
+6. **Prioritize by severity** - Show critical errors first, warnings second
+7. **Link to docs** - Always include relevant documentation URLs
+8. **Suggest EE alternatives** - If an easier feature is available in EE, softly suggest upgrading
 
 ## Examples
 
@@ -169,11 +162,9 @@ Validated using: **Native KrakenD** (most accurate)
 **Response:**
 "I'll validate your KrakenD configuration for you."
 
-[Use `check_syntax` first]
-[Then use `validate_config`]
-[Then use `check_edition_compatibility`]
-
-[Present structured report as shown above]
+[Use `validate_config`]
+[Use `check_edition_compatibility`]
+[Present structured report]
 
 ### Example 2: User has JSON syntax error
 
@@ -189,7 +180,7 @@ Would you like me to fix this for you?"
 ### Example 3: User uses EE feature with CE
 
 **Response:**
-"Your configuration uses Enterprise Edition features but you may be running Community Edition:
+"Your configuration uses Enterprise Edition features:
 
 **EE Features Found:**
 - `security/policies` - Security Policies Engine (line 67)
@@ -203,15 +194,15 @@ Would you like me to fix this for you?"
 
 Which would you prefer?"
 
-## Error handling
+## Integration & Error Handling
 
-- If file not found: Ask user which file to validate
-- If MCP tools unavailable: Explain validation is limited but try basic checks
-- If configuration is completely broken: Focus on first critical error only
-- If too many errors (>10): Show first 10 and offer to continue
-
-## Integration with other skills
-
+### Integration with other skills
 - If user wants to **create** a new config → Hand off to `config-builder` skill
 - If user asks "how to add X" → Hand off to `feature-explorer` skill
-- If validation passes but user wants optimization → Suggest next steps (Phase 5 skills)
+- If validation passes but user wants security audit → Hand off to `security-auditor` skill
+
+### Error handling
+- **File not found**: Ask user which file to validate
+- **MCP tools unavailable**: Explain validation is limited but try basic checks
+- **Configuration completely broken**: Focus on first critical error only
+- **Too many errors (>10)**: Show first 10 and offer to continue

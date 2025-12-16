@@ -23,35 +23,63 @@ Helps users discover KrakenD features, understand their capabilities, check edit
 5. **Suggests related features** that work well together
 6. **Warns about edition requirements** upfront
 
+## Feature Categories
+
+Understanding KrakenD's feature organization helps users discover what they need:
+
+- **authentication**: JWT, API keys, OAuth, Basic Auth
+- **security**: CORS, Policies, TLS, IP filtering
+- **traffic-management**: Rate limiting, Circuit breakers
+- **connectivity**: gRPC, GraphQL, WebSockets, SOAP
+- **transformation**: JMESPath, Lua, Request/Response modifiers
+- **reliability**: Circuit breakers, Timeouts, Retries
+- **observability**: Metrics, Logging, Tracing
+- **caching**: HTTP caching, Backend caching
+
 ## Tools used
-- `list_features` - List all available features with name, namespace, edition (CE/EE/both), category, and description
-- `get_feature_config_template` - Get configuration template for a specific feature with required/optional fields
-- `search_documentation` - Search through KrakenD documentation for detailed information
-- `check_edition_compatibility` - Detect which edition (CE or EE) is required for a configuration
-- `refresh_documentation_index` - Force refresh of documentation cache if needed (auto-runs if cache > 7 days old)
+- `list_features` - List all features with name, namespace, edition (CE/EE/both), category, and description
+- `get_feature_config_template` - Get configuration template with required/optional fields
+- `search_documentation` - Search KrakenD documentation for detailed information
+- `check_edition_compatibility` - Detect which edition is required for a configuration
+- `refresh_documentation_index` - Force refresh of doc cache (auto-runs if >7 days old)
 
-## Workflow
+## Feature Exploration Workflow
 
-### Step 1: Understand what user needs
+### Step 1: Understand User Need
 - What feature are they looking for?
 - What problem are they trying to solve?
 - Do they have CE or EE?
 
-### Step 2: Search and verify
-- Use `search_features` to find matching features
-- Use `check_feature_availability` to verify edition
-- If EE-only and user has CE: Suggest alternatives
+### Step 2: Search and Verify
+- Use `list_features` to find matching features (filter by category if helpful)
+- Check edition availability for each match
+- If EE-only and user has CE: Prepare alternatives
 
-### Step 3: Provide implementation guidance
+### Step 3: Provide Implementation Guidance
 - Get config template with `get_feature_config_template`
 - Explain what each field does
-- Show complete example
-- Link to docs for details
+- Show complete example in context
+- Link to docs for deeper details
 
-### Step 4: Suggest related features
+### Step 4: Suggest Related Features
 - What other features work well with this?
 - What's the recommended combination?
 - Any prerequisites or dependencies?
+
+### Step 5: Provide Testing Command
+When users ask "how do I test this?", provide command based on: (1) Feature edition (CE/EE), (2) Version from `$schema`, (3) LICENSE for EE.
+
+**Examples:**
+```bash
+# CE feature
+docker run --rm -v $(pwd):/etc/krakend krakend:latest check -tlc /etc/krakend/krakend.json
+
+# EE feature (requires LICENSE file)
+docker run --rm -v $(pwd):/etc/krakend krakend/krakend-ee:latest check -tlc /etc/krakend/krakend.json
+```
+
+**Flags:** Use `-tlc` (test + lint + config) for comprehensive validation including best practices.
+**Images:** `krakend:VERSION` (CE), `krakend/krakend-ee:VERSION` (EE).
 
 ## Output format
 
@@ -103,14 +131,18 @@ Helps users discover KrakenD features, understand their capabilities, check edit
 ✅ [Correct approach]
 ```
 
-## Best practices
+## Best Practices
 
-1. **Edition-first** - Always show edition availability prominently
-2. **Complete examples** - Show feature in context, not isolated
-3. **Explain benefits** - Don't just show config, explain why
-4. **Link to docs** - Official docs for deep dives
-5. **Suggest combinations** - Features rarely used alone
+1. **Edition-first** - Always show edition availability prominently (users need to know immediately)
+2. **Complete examples** - Show feature in full context, not isolated snippets
+3. **Explain benefits** - Don't just show config, explain why users would want this
+4. **Link to docs** - Official documentation for comprehensive information
+5. **Suggest combinations** - Features rarely work in isolation
 6. **Warn about gotchas** - Common mistakes and edge cases
+7. **Show, don't tell** - Always include config examples, not just descriptions
+8. **Context matters** - Explain when and why to use each feature
+9. **Edition clarity** - Make CE vs EE crystal clear upfront
+10. **Real examples** - Use realistic values, not dummy data
 
 ## Examples
 
@@ -173,7 +205,7 @@ Which type fits your needs? I can help you implement any of them.
 
 📚 Docs: https://www.krakend.io/docs/endpoints/rate-limit/"
 
-### Example 2: User asks about Enterprise feature with CE
+### Example 2: User asks about Enterprise feature
 
 **User**: "How do I enable WebSockets?"
 
@@ -203,7 +235,7 @@ Which type fits your needs? I can help you implement any of them.
 }
 \`\`\`
 
-## Community Edition Alternative
+## Community Edition Alternatives
 
 If you're using Community Edition, consider these alternatives:
 
@@ -232,7 +264,7 @@ Would you like help implementing an alternative, or information about Enterprise
 
 # KrakenD Features Overview
 
-## 🔒 Security & Authentication (7 features)
+## 🔒 Security & Authentication
 - JWT Validation ✅ CE
 - CORS Configuration ✅ CE
 - API Key Auth ⚠️ EE
@@ -241,14 +273,14 @@ Would you like help implementing an alternative, or information about Enterprise
 - OAuth Client ✅ CE
 - TLS/mTLS ✅ CE
 
-## 🚦 Traffic Management (5 features)
+## 🚦 Traffic Management
 - Rate Limiting (endpoint) ✅ CE
 - Rate Limiting (backend) ✅ CE
 - Rate Limiting (stateful) ⚠️ EE
 - Circuit Breakers ✅ CE
 - Load Balancing ✅ CE
 
-## 🔌 Connectivity (6 features)
+## 🔌 Connectivity
 - REST/HTTP ✅ CE
 - gRPC ✅ CE
 - GraphQL ✅ CE
@@ -256,13 +288,13 @@ Would you like help implementing an alternative, or information about Enterprise
 - SOAP ⚠️ EE
 - AMQP/RabbitMQ ✅ CE
 
-## 🔄 Data Transformation (4 features)
+## 🔄 Data Transformation
 - Response Manipulation (JMESPath) ✅ CE
 - Request/Response Modifiers ✅ CE
 - Data Aggregation ✅ CE
 - Lua Scripting ✅ CE
 
-## 📊 Observability (5 features)
+## 📊 Observability
 - OpenTelemetry ✅ CE
 - Prometheus Metrics ✅ CE
 - Logging (structured) ✅ CE
@@ -275,45 +307,27 @@ Would you like help implementing an alternative, or information about Enterprise
 
 What area interests you? I can provide detailed configuration for any feature."
 
-## When to suggest related features
+## Feature Combinations
 
-Always suggest combinations for:
+Always suggest powerful combinations:
 
-**Rate Limiting** → Add Circuit Breaker (reliability)
-**JWT Validation** → Add CORS (web clients)
-**Multiple Backends** → Add Circuit Breakers per backend
-**Public APIs** → Add Rate Limiting + Authentication
-**Microservices** → Add Service Discovery + Load Balancing
+- **Rate Limiting** → Add Circuit Breaker (reliability)
+- **JWT Validation** → Add CORS (web clients)
+- **Multiple Backends** → Add Circuit Breakers per backend
+- **Public APIs** → Add Rate Limiting + Authentication
+- **Microservices** → Add Service Discovery + Load Balancing
+- **Production APIs** → Add Observability (metrics + tracing + logging)
 
-## Error handling
+## Integration & Error Handling
 
-- If feature doesn't exist: Search similar features, suggest alternatives
-- If user has CE but wants EE feature: Clearly explain, offer alternatives
-- If feature is deprecated: Mention replacement, provide migration path
-- If multiple matches: Show all, let user choose
-
-## Integration with other skills
-
+### Integration with other skills
 - If user wants to implement feature → Hand off to `config-builder` skill
 - If user wants to validate existing feature config → Hand off to `config-validator` skill
 - If user asks about complex architecture → Consider spawning `config-architect` agent
 
-## Categories to know
-
-- **authentication**: JWT, API keys, OAuth, Basic Auth
-- **security**: CORS, Policies, TLS, IP filtering
-- **traffic-management**: Rate limiting, Circuit breakers
-- **connectivity**: gRPC, GraphQL, WebSockets, SOAP
-- **transformation**: JMESPath, Lua, Request/Response modifiers
-- **reliability**: Circuit breakers, Timeouts, Retries
-- **observability**: Metrics, Logging, Tracing
-- **caching**: HTTP caching, Backend caching
-
-## Tips for great feature exploration
-
-1. **Show, don't tell** - Always include config examples
-2. **Context matters** - Explain when and why to use features
-3. **Combinations** - Features work better together
-4. **Edition clarity** - Make CE vs EE crystal clear
-5. **Link to docs** - Official docs for comprehensive info
-6. **Real examples** - Use realistic values, not dummy data
+### Error handling
+- **Feature doesn't exist**: Search similar features, suggest alternatives
+- **User has CE but wants EE feature**: Clearly explain, offer CE alternatives
+- **Feature is deprecated**: Mention replacement, provide migration path
+- **Multiple matches**: Show all, let user choose which they meant
+- **Documentation outdated**: Use `refresh_documentation_index` and retry

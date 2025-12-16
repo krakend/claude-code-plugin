@@ -8,54 +8,33 @@ description: Performs comprehensive security audits of KrakenD configurations to
 ## Purpose
 Performs comprehensive security audits of KrakenD configurations using the native `krakend audit` command with intelligent fallback and automatic Flexible Configuration support. Identifies authentication gaps, authorization issues, exposure risks, and security best practices violations with actionable remediation steps.
 
-## Flexible Configuration Support (IMPORTANT)
-
-This skill automatically detects and handles **Flexible Configuration** (FC):
-
-**Two Variants:**
-
-1. **Community Edition (CE):** Uses `.tmpl` files + env vars (`FC_ENABLE=1`, `FC_SETTINGS`, etc.)
-2. **Enterprise Edition (EE):** Uses `flexible_config.json` behavioral file (no env vars needed)
-
-**This skill automatically:**
-- ✅ Detects FC and identifies variant (CE or EE)
-- ✅ Adjusts `krakend audit` commands with correct settings
-- ✅ Reports FC detection in audit results
-- ✅ Audits the actual template-based configuration
-
-Users don't need to configure anything - FC detection and handling is automatic.
-See [CE docs](https://www.krakend.io/docs/configuration/flexible-config/) | [EE docs](https://www.krakend.io/docs/enterprise/configuration/flexible-config/)
-
 ## When to activate
 - User asks to audit security: "check security", "security audit", "is this secure"
 - User mentions security concerns: "secure my api", "security issues", "vulnerabilities"
 - User wants to review authentication/authorization: "check auth", "review authentication"
 - User wants to find security problems: "security scan", "find security issues"
 - After completing configuration changes to verify security posture
+- Before production deployment (proactively suggest)
 
 ## What this skill does
 
-1. **Performs security audit** using smart three-tier validation:
-   - Native `krakend audit` command if available (most comprehensive)
-   - Docker-based audit if native unavailable
-   - Basic security checks as fallback (CORS, auth, rate limiting, debug endpoints)
+1. **Performs comprehensive security audit** using smart three-tier approach:
+   - Native `krakend audit` command (most comprehensive)
+   - Docker-based audit (fallback)
+   - Basic security checks (last resort: CORS, auth, rate limiting, debug endpoints)
 
-2. **Categorizes security issues** by severity:
-   - **Critical**: Immediate action required (exposed credentials, no authentication)
-   - **High**: Serious security gaps (missing authentication, debug enabled)
-   - **Medium**: Important improvements (missing CORS, no rate limiting)
-   - **Low**: Best practice recommendations (security headers, logging)
-   - **Info**: Informational notices (configuration observations)
+2. **Auto-detects Flexible Configuration** (CE and EE variants) and adjusts audit accordingly
 
-3. **Provides specific remediation** for each finding:
-   - Exact location of the issue (JSON path)
+3. **Categorizes issues** by severity: Critical → High → Medium → Low → Info
+
+4. **Provides specific remediation** with:
+   - Exact location (JSON path)
    - Step-by-step fix instructions
    - Example configuration snippets
    - Links to relevant documentation
 
-4. **Checks common vulnerabilities**:
-   - Missing or weak authentication
-   - Authorization bypasses
+5. **Checks common vulnerabilities**:
+   - Missing or weak authentication/authorization
    - Exposed sensitive endpoints
    - Missing rate limiting (DoS protection)
    - Lack of CORS configuration
@@ -63,12 +42,70 @@ See [CE docs](https://www.krakend.io/docs/configuration/flexible-config/) | [EE 
    - Insecure headers
    - Overly permissive configurations
 
+## Security Categories
+
+Understanding these helps interpret audit results:
+
+- **authentication**: Missing or weak authentication mechanisms
+- **authorization**: Authorization bypasses or inadequate access controls
+- **exposure**: Exposed sensitive information or debug endpoints
+- **dos-protection**: Lack of rate limiting or abuse prevention
+- **security-headers**: Missing security-related HTTP headers
+- **encryption**: Weak or missing encryption (TLS, JWT signing)
+- **injection**: Potential injection vulnerabilities
+- **best-practice**: Security best practice violations
+
 ## Tools used
-- `audit_security` - Comprehensive security audit (smart fallback: native KrakenD → Docker → basic checks)
-- `list_features` - Browse available security features and their edition requirements
+- `audit_security` - Comprehensive security audit (smart 3-tier fallback: native → Docker → basic checks)
+- `list_features` - Browse available security features and edition requirements
 - `get_feature_config_template` - Get configuration templates for security features
 - `search_documentation` - Find relevant security documentation
 - `validate_config` - Validate configuration structure alongside security checks
+
+## Security Audit Workflow
+
+### Step 1: Prepare Audit
+- Read the configuration file
+- Detect Flexible Configuration (CE or EE variant)
+- Determine required edition (CE or EE)
+- Check for LICENSE file if EE features detected
+
+### Step 2: Run Security Audit
+Use `audit_security` tool which automatically:
+- Selects best audit method (native → Docker → basic)
+- Handles FC detection and configuration
+- Infers version from `$schema` field
+- Categorizes findings by severity
+- Generates remediation guidance
+
+### Step 3: Analyze Results
+- Group findings by severity (Critical, High, Medium, Low, Info)
+- Identify quick wins vs. long-term improvements
+- Highlight authentication/authorization gaps first
+- Note edition-specific recommendations
+
+### Step 4: Present Report
+- Show severity summary upfront
+- Detail critical and high severity issues first
+- Provide specific remediation steps
+- Include configuration examples
+- Link to relevant documentation
+
+### Audit Commands
+
+When showing users how to manually audit, provide command based on: (1) Version from `$schema`, (2) Edition (CE/EE by features), (3) FC detection, (4) LICENSE for EE.
+
+**Examples:**
+```bash
+# CE audit
+docker run --rm -v $(pwd):/etc/krakend krakend:VERSION audit -c /etc/krakend/krakend.json
+
+# EE audit (LICENSE file present)
+docker run --rm -v $(pwd):/etc/krakend krakend/krakend-ee:VERSION audit -c /etc/krakend/krakend.json
+```
+
+**Accuracy:** Native `krakend audit` (most comprehensive) > Docker > Basic checks (limited scope).
+**Images:** `krakend:VERSION` (CE), `krakend/krakend-ee:VERSION` (EE).
 
 ## Output format
 
@@ -161,45 +198,6 @@ Add CORS configuration with explicit allowed origins:
 **References**:
 - https://www.krakend.io/docs/service-settings/cors/
 
----
-
-### 4. No Rate Limiting Configured
-**Severity**: MEDIUM
-**Category**: dos-protection
-**Location**: $.endpoints[*] (all endpoints)
-
-**Issue**:
-None of the endpoints have rate limiting configured, leaving the API vulnerable to abuse and DoS attacks.
-
-**Remediation**:
-Add rate limiting to sensitive endpoints:
-```json
-"extra_config": {
-  "qos/ratelimit/router": {
-    "max_rate": 100,
-    "capacity": 100,
-    "client_max_rate": 10,
-    "client_capacity": 10
-  }
-}
-```
-
-**References**:
-- https://www.krakend.io/docs/endpoints/rate-limit/
-
-## Low Severity Issues
-
-### 5. Missing Security Headers
-**Severity**: LOW
-**Category**: security-headers
-**Location**: $.extra_config (root level)
-
-**Issue**:
-Security headers like X-Frame-Options, X-Content-Type-Options not configured.
-
-**Remediation**:
-Consider adding security headers plugin if available in your KrakenD edition.
-
 ## Best Practices Recommendations
 
 ✓ Circuit breakers configured for backends
@@ -207,9 +205,6 @@ Consider adding security headers plugin if available in your KrakenD edition.
 ⚠️ Consider adding request/response logging for security monitoring
 ⚠️ Consider implementing API key authentication for service-to-service calls
 ⚠️ Review and minimize backend exposure (principle of least privilege)
-
-## Validation Method
-Validated using: **Native KrakenD audit** (most comprehensive)
 
 ## Next Steps
 
@@ -219,18 +214,18 @@ Validated using: **Native KrakenD audit** (most comprehensive)
 4. **Ongoing**: Run security audits regularly, especially after configuration changes
 ```
 
-## Best practices
+## Best Practices
 
-1. **Always show severity** - Use clear severity levels (CRITICAL, HIGH, MEDIUM, LOW, INFO)
-2. **Prioritize findings** - Show critical/high severity issues first
-3. **Be specific and actionable** - Don't just say "insecure", explain what's wrong and how to fix
-4. **Include context** - Show exact location using JSON paths
-5. **Provide examples** - Include working configuration snippets for remediation
-6. **Link to docs** - Always include relevant KrakenD documentation URLs
-7. **Consider edition** - Recommend CE-compatible solutions unless user has EE
-8. **Show audit method** - Always indicate which validation method was used (native/Docker/basic)
-9. **Balance security with usability** - Don't recommend overly restrictive configs without explanation
-10. **Follow up** - Suggest re-running audit after fixes are applied
+1. **Severity-first** - Always show critical/high severity issues first (these need immediate action)
+2. **Be specific and actionable** - Don't just say "insecure", explain what's wrong and exactly how to fix it
+3. **Include context** - Show exact location using JSON paths
+4. **Provide examples** - Include working configuration snippets for remediation
+5. **Link to docs** - Always include relevant KrakenD documentation URLs
+6. **Consider edition** - Recommend CE-compatible solutions unless user has EE
+7. **Show audit method** - Indicate which validation method was used (affects comprehensiveness)
+8. **Balance security with usability** - Don't recommend overly restrictive configs without explanation
+9. **Follow up** - Suggest re-running audit after fixes are applied
+10. **Context matters** - Development vs. production requires different security levels
 
 ## Examples
 
@@ -239,19 +234,17 @@ Validated using: **Native KrakenD audit** (most comprehensive)
 **Response:**
 "I'll perform a comprehensive security audit of your KrakenD configuration."
 
-[Use `audit_security` with the configuration]
-
+[Use `audit_security`]
 [Present structured report as shown above]
 
 "I found 3 high severity issues that should be addressed immediately. Would you like me to help you fix these issues?"
 
-### Example 2: User asks "check security before production"
+### Example 2: Pre-production security check
 
 **Response:**
 "I'll audit your configuration for security issues before production deployment."
 
 [Use `audit_security` with production config]
-
 [Present findings]
 
 "Your configuration has 2 critical issues that must be fixed before production:
@@ -260,13 +253,12 @@ Validated using: **Native KrakenD audit** (most comprehensive)
 
 Would you like me to fix these now?"
 
-### Example 3: User implements authentication and asks for re-audit
+### Example 3: Post-fix re-audit
 
 **Response:**
 "I'll re-run the security audit to verify your authentication changes."
 
 [Use `audit_security` again]
-
 [Compare with previous results if available]
 
 "Great progress! The authentication issue is now resolved. Remaining items:
@@ -275,7 +267,7 @@ Would you like me to fix these now?"
 
 Shall we address these next?"
 
-### Example 4: Basic checks fallback scenario
+### Example 4: Fallback to basic checks
 
 **Response:**
 "KrakenD binary and Docker are not available, so I'll perform basic security checks."
@@ -290,36 +282,9 @@ Shall we address these next?"
 
 Note: For a comprehensive audit, install KrakenD or Docker to run the full `krakend audit` command. These basic checks cover common issues but may miss advanced security problems."
 
-## Error handling
+## When to Run Security Audits
 
-- **If config file not found**: Ask user which file to audit
-- **If config is invalid JSON**: Run syntax check first, then report
-- **If audit produces no output**: Explain that no issues were found (best case!)
-- **If KrakenD audit fails**: Fall back to Docker, then basic checks automatically
-- **If too many issues found (>15)**: Group by severity and offer to show details incrementally
-- **If user has mix of CE/EE features**: Note in recommendations which features require EE
-
-## Integration with other skills
-
-- **After config-builder creates new config** → Automatically suggest security audit
-- **If config-validator finds issues** → Mention that security audit can find security-specific problems
-- **Before production deployment** → Strongly recommend running security audit
-- **After migration-assistant** → Suggest security audit to ensure no security regressions
-- **If user asks about specific features** (auth, CORS, etc.) → Offer to run full security audit
-
-## Security categories explained
-
-- **authentication**: Missing or weak authentication mechanisms
-- **authorization**: Authorization bypasses or inadequate access controls
-- **exposure**: Exposed sensitive information or debug endpoints
-- **dos-protection**: Lack of rate limiting or abuse prevention
-- **security-headers**: Missing security-related HTTP headers
-- **encryption**: Weak or missing encryption (TLS, JWT signing)
-- **injection**: Potential injection vulnerabilities
-- **best-practice**: Security best practice violations
-
-## When to run security audits
-
+Proactively suggest security audits:
 - ✅ Before initial deployment
 - ✅ After any configuration changes
 - ✅ After adding new endpoints
@@ -328,3 +293,19 @@ Note: For a comprehensive audit, install KrakenD or Docker to run the full `krak
 - ✅ Periodically (monthly/quarterly)
 - ✅ After upgrading KrakenD versions
 - ✅ When changing authentication mechanisms
+
+## Integration & Error Handling
+
+### Integration with other skills
+- After `config-builder` creates new config → Suggest security audit
+- If `config-validator` finds issues → Mention security-specific audit available
+- Before production deployment → Strongly recommend security audit
+- If user asks about specific security features → Offer to run full audit
+
+### Error handling
+- **Config file not found**: Ask user which file to audit
+- **Config is invalid JSON**: Run syntax check first via `config-validator`, then report
+- **Audit produces no output**: Explain that no issues were found (best case!)
+- **KrakenD audit fails**: Tool automatically falls back to Docker, then basic checks
+- **Too many issues (>15)**: Group by severity and offer to show details incrementally
+- **Mix of CE/EE features**: Note in recommendations which features require EE

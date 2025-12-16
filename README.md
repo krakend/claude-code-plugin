@@ -3,7 +3,7 @@
 **Intelligent Claude Code plugin for KrakenD API Gateway with proactive Skills and Architecture Agent.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Plugin Version](https://img.shields.io/badge/Plugin-0.6.1-blue.svg)](https://github.com/krakend/claude-code-plugin)
+[![Plugin Version](https://img.shields.io/badge/Plugin-0.6.2-blue.svg)](https://github.com/krakend/claude-code-plugin)
 [![MCP Server](https://img.shields.io/badge/MCP%20Server-0.6.1-green.svg)](https://github.com/krakend/mcp-server)
 
 ## Overview
@@ -201,7 +201,7 @@ For security concerns, see [SECURITY.md](SECURITY.md).
 
 ---
 
-**Version**: 0.6.1
+**Version**: 0.6.2
 **Features**: 4 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
 
 ---

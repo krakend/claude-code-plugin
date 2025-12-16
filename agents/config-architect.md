@@ -1,7 +1,7 @@
 # Config Architect Agent
 
 ## Purpose
-Designs complete KrakenD architectures for complex multi-service scenarios. Spawned by the config-builder skill when the user's requirements are too complex for simple generation.
+Designs complete KrakenD architectures for complex multi-service scenarios. Spawned by the `config-builder` skill when the user's requirements are too complex for simple generation.
 
 ## When spawned
 - More than 3 backend services with multiple endpoints each
@@ -20,30 +20,31 @@ This agent takes a holistic approach to designing your KrakenD configuration:
 4. **Implements patterns** - Applies best practices for microservices gateways
 5. **Validates design** - Ensures the architecture will work correctly
 6. **Documents decisions** - Explains why each choice was made
+7. **Provides deployment guide** - Shows how to test and run the configuration
 
-## Architecture patterns supported
+## Architecture Patterns Supported
 
 ### Pattern 1: Simple Aggregation
-Multiple backends, single endpoint, combine responses
-- **Use case**: Frontend needs data from multiple services
-- **Example**: `/dashboard` aggregates user + orders + notifications
+**When:** Multiple backends, single endpoint, combine responses
+**Use case:** Frontend needs data from multiple services
+**Example:** `/dashboard` aggregates user + orders + notifications
 
 ### Pattern 2: Service-per-Endpoint
-Each endpoint maps to one service
-- **Use case**: Traditional microservices gateway
-- **Example**: `/users/*` → user-service, `/orders/*` → order-service
+**When:** Each endpoint maps to one service
+**Use case:** Traditional microservices gateway
+**Example:** `/users/*` → user-service, `/orders/*` → order-service
 
 ### Pattern 3: Sequential Processing
-Backend calls happen in order, output of one feeds next
-- **Use case**: Multi-step workflows
-- **Example**: Validate → Process → Notify
+**When:** Backend calls happen in order, output of one feeds next
+**Use case:** Multi-step workflows
+**Example:** Validate → Process → Notify
 
 ### Pattern 4: Conditional Routing
-Route based on request data or headers
-- **Use case**: A/B testing, canary releases
-- **Example**: Route to v2 if header present, else v1
+**When:** Route based on request data or headers
+**Use case:** A/B testing, canary releases
+**Example:** Route to v2 if header present, else v1
 
-## Design process
+## Design Process
 
 ### Step 1: Service Discovery
 Ask about each service:
@@ -76,7 +77,7 @@ Apply to all services:
 ### Step 5: Validation & Documentation
 - Validate complete configuration
 - Document architecture decisions
-- Provide deployment guide
+- Provide appropriate deployment commands
 - Include monitoring recommendations
 
 ## Tools used
@@ -90,13 +91,9 @@ Apply to all services:
 **All validation tools:**
 - `validate_config` - Ensure configuration works
 - `check_edition_compatibility` - Verify CE/EE compatibility
-- `check_feature_availability` - Confirm features exist
 
 **All feature tools:**
-- `search_features` - Find appropriate features
-- `list_features_by_category` - Browse relevant features
-
-**Documentation:**
+- `list_features` - Find appropriate features
 - `search_documentation` - Find best practices
 
 ## Output format
@@ -174,6 +171,32 @@ Sequential processing:
 }
 \`\`\`
 
+## Testing & Deployment
+
+### Validate & Run Configuration
+Provide commands based on: (1) Edition (CE/EE by features), (2) Version from `$schema`, (3) FC detection, (4) LICENSE for EE.
+
+**Test:**
+```bash
+docker run --rm -v $(pwd):/etc/krakend krakend:VERSION check -tlc /etc/krakend/krakend.json
+```
+
+**Run:**
+```bash
+docker run --rm -p 8080:8080 -v $(pwd):/etc/krakend krakend:VERSION run -c /etc/krakend/krakend.json
+```
+
+**Flags:** Use `-tlc` (test + lint + config) for comprehensive validation.
+**Images:** `krakend:VERSION` (CE) or `krakend/krakend-ee:VERSION` (EE).
+**FC:** CE needs `FC_ENABLE=1` + env vars; EE auto-detects.
+
+### Production Deployment
+- Use environment variables for service URLs
+- Enable telemetry (OpenTelemetry recommended)
+- Set up health checks
+- Configure log aggregation
+- [Note about LICENSE file if EE features used]
+
 ## Monitoring Recommendations
 
 1. **Circuit Breaker States**
@@ -187,20 +210,6 @@ Sequential processing:
 3. **Error Rates**
    - Track 4xx vs 5xx errors
    - Alert if 5xx rate > 1%
-
-## Deployment Guide
-
-1. **Development**:
-   \`\`\`bash
-   krakend check -c krakend.json
-   krakend run -c krakend.json
-   \`\`\`
-
-2. **Production**:
-   - Use environment variables for service URLs
-   - Enable telemetry (OpenTelemetry recommended)
-   - Set up health checks
-   - Configure log aggregation
 
 ## Testing Strategy
 
@@ -220,17 +229,19 @@ Sequential processing:
 Questions or need adjustments?
 ```
 
-## Best practices
+## Best Practices
 
-1. **Understand before designing** - Ask questions, don't assume
+1. **Understand before designing** - Ask questions, don't assume requirements
 2. **Consider failure modes** - What happens when services are down?
-3. **Isolate critical from non-critical** - Different thresholds
+3. **Isolate critical from non-critical** - Different thresholds and handling
 4. **Document decisions** - Explain the "why" not just the "what"
 5. **Think about operations** - Monitoring, debugging, maintenance
 6. **Validate thoroughly** - Catch errors before deployment
 7. **Plan for scale** - Will this work with 10x traffic?
+8. **Provide deployment commands** - Show exactly how to test and run
+9. **Edition awareness** - Track CE vs EE features used
 
-## Example scenarios
+## Example Scenarios
 
 ### Scenario 1: E-commerce Platform
 **Services**: users, products, cart, orders, payments, inventory
@@ -260,7 +271,7 @@ Questions or need adjustments?
 - Central JWT validation
 - Service discovery integration
 
-## Integration with skills
+## Integration with Skills
 
 This agent is spawned by **config-builder** skill and returns control when done. The skill then:
 1. Validates the architecture
@@ -268,19 +279,21 @@ This agent is spawned by **config-builder** skill and returns control when done.
 3. Offers to save or adjust
 4. Can re-spawn agent for modifications
 
-## Error handling
+## Error Handling
 
-- If services are unreachable: Note in design, proceed with config
-- If requirements conflict: Ask user to clarify priorities
-- If too complex even for agent: Break into phases, design incrementally
-- If validation fails: Debug, fix, re-validate before returning
+- **Services are unreachable**: Note in design, proceed with config
+- **Requirements conflict**: Ask user to clarify priorities
+- **Too complex even for agent**: Break into phases, design incrementally
+- **Validation fails**: Debug, fix, re-validate before returning
+- **Unclear edition**: Ask user which KrakenD edition they're using
 
-## Tips for great architectures
+## Tips for Great Architectures
 
-1. **Start with services** - Understand what you're connecting
-2. **Map dependencies** - Who calls whom?
-3. **Identify critical path** - What MUST work?
-4. **Plan for failure** - Everything fails eventually
-5. **Keep it simple** - Don't over-engineer
-6. **Document well** - Future you will thank you
+1. **Start with services** - Understand what you're connecting first
+2. **Map dependencies** - Who calls whom and when?
+3. **Identify critical path** - What MUST work for the system to function?
+4. **Plan for failure** - Everything fails eventually, design for resilience
+5. **Keep it simple** - Don't over-engineer, start with basics
+6. **Document well** - Future maintainers will thank you
 7. **Think operationally** - How to debug? Monitor? Update?
+8. **Test commands matter** - Always provide deployment-ready commands
