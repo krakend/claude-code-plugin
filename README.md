@@ -4,7 +4,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Plugin Version](https://img.shields.io/badge/Plugin-0.6.2-blue.svg)](https://github.com/krakend/claude-code-plugin)
-[![MCP Server](https://img.shields.io/badge/MCP%20Server-0.6.1-green.svg)](https://github.com/krakend/mcp-server)
+[![MCP Server](https://img.shields.io/badge/MCP%20Server-0.6.2-green.svg)](https://github.com/krakend/mcp-server)
 
 ## Overview
 
@@ -80,7 +80,7 @@ Install from the KrakenD marketplace or local development copy:
 ```
 
 The plugin will automatically:
-1. Download the KrakenD MCP Server v0.6.1 (fully offline-capable with embedded docs)
+1. Download the KrakenD MCP Server v0.6.2 (fully offline-capable with embedded docs)
 2. Verify checksums for security
 3. Install to the plugin directory
 4. Start the MCP server connection
