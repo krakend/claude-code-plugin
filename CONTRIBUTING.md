@@ -170,7 +170,7 @@ Usage scenarios
 
 This plugin depends on the [KrakenD MCP Server](https://github.com/krakend/mcp-server).
 
-Current version: **0.6.2**
+Current version: **0.6.3**
 
 ### Updating MCP Server Version
 
