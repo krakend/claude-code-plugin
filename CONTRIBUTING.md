@@ -318,15 +318,6 @@ Verbose installation:
 - **README**: Update for user-facing changes
 - **This file**: Update for process changes
 
-## Version Compatibility
-
-Maintain compatibility matrix in README.md:
-
-| Plugin | MCP Server | Status |
-|--------|-----------|--------|
-| 0.6.2  | 0.6.1     | ✅ Tested |
-| 0.7.0  | 0.7.0     | ✅ Works |
-
 ## Release Process
 
 1. Update version in:

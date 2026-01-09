@@ -1,6 +1,6 @@
 {
   "name": "krakend-ai-assistant",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "AI assistance for KrakenD API Gateway configuration, validation, security auditing, and Flexible Configuration support",
   "author": {
     "name": "KrakenD",
