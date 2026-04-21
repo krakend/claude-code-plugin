@@ -15,7 +15,7 @@
 set -e  # Exit on error
 
 # Version of MCP server required by this plugin
-REQUIRED_MCP_VERSION="0.6.3"
+REQUIRED_MCP_VERSION="0.7.0"
 
 # Colors for output
 RED='\033[0;31m'
