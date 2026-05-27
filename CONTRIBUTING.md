@@ -170,7 +170,7 @@ Usage scenarios
 
 This plugin depends on the [KrakenD MCP Server](https://github.com/krakend/mcp-server).
 
-Current version: **0.7.0**
+Current version: **0.8.0**
 
 ### Updating MCP Server Version
 
@@ -179,7 +179,7 @@ To update the required MCP server version:
 1. Edit `scripts/install-mcp.sh`:
 ```bash
 # Version of MCP server required by this plugin
-REQUIRED_MCP_VERSION="0.7.0"  # Update this
+REQUIRED_MCP_VERSION="0.8.0"  # Update this
 ```
 
 2. Update plugin version in `.claude-plugin/plugin.json`
@@ -328,7 +328,7 @@ Verbose installation:
 
 2. Create release notes
 
-3. Tag release: `git tag v0.7.0`
+3. Tag release: `git tag v0.8.0`
 
 4. Push: `git push && git push --tags`
 
