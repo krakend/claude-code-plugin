@@ -5,7 +5,7 @@ Thank you for your interest in contributing to the KrakenD AI Assistant plugin!
 ## Overview
 
 This is a Claude Code plugin that provides intelligent KrakenD configuration assistance through:
-- 4 proactive Skills
+- 5 proactive Skills
 - 1 specialized Architecture Agent
 - Integration with [KrakenD MCP Server](https://github.com/krakend/mcp-server)
 
@@ -45,10 +45,11 @@ claude-code-plugin/
 │   ├── plugin.json          # Plugin metadata and hooks
 │   └── marketplace.json     # Marketplace listing
 ├── .mcp.json                # MCP server configuration
-├── skills/                  # 4 proactive skills
+├── skills/                  # 5 proactive skills
 │   ├── config-builder/
 │   ├── config-validator/
 │   ├── feature-explorer/
+│   ├── runtime-detector/
 │   └── security-auditor/
 ├── agents/                  # Specialized agents
 │   └── config-architect.md
@@ -303,7 +304,7 @@ Include:
 
 ### Logs and Debugging
 
-Installation logs: `~/.claude/plugins/krakend-ai-assistant/.install.log`
+Installation logs: `~/.claude/plugins/cache/krakend/krakend-ai-assistant/<version>/.install.log`
 
 Verbose installation:
 ```bash

@@ -20,7 +20,7 @@ KrakenD AI Assistant is a powerful Claude Code plugin that brings intelligent Kr
 
 ## Features
 
-### 4 Proactive Skills
+### 5 Proactive Skills
 
 #### 1. **Config Validator**
 Auto-activates when you mention validation or have config issues.
@@ -52,6 +52,14 @@ Auto-activates when you mention security or audits.
 ```
 You: "audit my config security"
 Skill: Comprehensive security analysis with actionable fixes
+```
+
+#### 5. **Runtime Detector**
+Auto-activates when you want to run or test KrakenD.
+
+```
+You: "how do I run this config locally?"
+Skill: Detects native binary or Docker and gives the right command and image
 ```
 
 ### 1 Specialized Agent
@@ -135,7 +143,7 @@ You: "I need to design an API gateway for a microservices architecture with:
 
 This plugin provides an enhanced KrakenD experience through:
 
-1. **4 Proactive Skills** - Auto-activate when you need them
+1. **5 Proactive Skills** - Auto-activate when you need them
 2. **1 Architecture Agent** - Designs complex multi-service setups
 3. **[KrakenD MCP Server](https://github.com/krakend/mcp-server)** - Automatically managed, provides validation, generation, and documentation tools
 
@@ -154,15 +162,18 @@ Want to contribute or customize the plugin? See [CONTRIBUTING.md](CONTRIBUTING.m
 ### MCP Server Won't Start
 
 ```bash
+# The plugin is installed in a versioned folder; find yours
+ls ~/.claude/plugins/cache/krakend/krakend-ai-assistant/
+cd ~/.claude/plugins/cache/krakend/krakend-ai-assistant/<version>
+
 # Check if binary exists
-ls -la ~/.claude/plugins/krakend-ai-assistant/servers/krakend-mcp-server/
+ls -la servers/krakend-mcp-server/
 
 # Manually reinstall
-cd ~/.claude/plugins/krakend-ai-assistant
 ./scripts/install-mcp.sh --verbose
 
 # Check logs
-cat ~/.claude/plugins/krakend-ai-assistant/.install.log
+cat .install.log
 ```
 
 ### Version Mismatch
@@ -202,7 +213,7 @@ For security concerns, see [SECURITY.md](SECURITY.md).
 ---
 
 **Version**: 0.6.7
-**Features**: 4 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
+**Features**: 5 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
 
 ---
 
