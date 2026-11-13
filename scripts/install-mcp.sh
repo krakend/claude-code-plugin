@@ -367,7 +367,8 @@ main() {
     echo ""
     log "Binary location: $BINARY_PATH"
     log "Platform: ${OS_NAME}-${ARCH_NAME}"
-    log "Version: $VERSION"
+    log "MCP server version: v$REQUIRED_MCP_VERSION"
+    log "Plugin version: $VERSION"
 
     if [ $VERBOSE -eq 1 ]; then
         echo ""
