@@ -87,6 +87,17 @@ Install from the KrakenD marketplace or local development copy:
 /plugin add ~/Code/krakend/claude-code-plugin
 ```
 
+### Keeping the Plugin Updated
+
+Claude Code doesn't auto-update third-party marketplaces by default, so you will keep running the version you first installed. To get new releases automatically, open `/plugin`, go to **Marketplaces**, select `krakend` and choose **Enable auto-update**. New versions are picked up when Claude Code starts.
+
+To update manually instead:
+
+```bash
+claude plugin marketplace update krakend
+claude plugin update krakend-ai-assistant@krakend
+```
+
 The plugin will automatically:
 1. Download the KrakenD MCP Server v0.8.2 (fully offline-capable with embedded docs)
 2. Verify checksums for security
