@@ -5,7 +5,7 @@ Thank you for your interest in contributing to the KrakenD AI Assistant plugin!
 ## Overview
 
 This is a Claude Code plugin that provides intelligent KrakenD configuration assistance through:
-- 4 proactive Skills
+- 5 proactive Skills
 - 1 specialized Architecture Agent
 - Integration with [KrakenD MCP Server](https://github.com/krakend/mcp-server)
 
@@ -45,10 +45,11 @@ claude-code-plugin/
 │   ├── plugin.json          # Plugin metadata and hooks
 │   └── marketplace.json     # Marketplace listing
 ├── .mcp.json                # MCP server configuration
-├── skills/                  # 4 proactive skills
+├── skills/                  # 5 proactive skills
 │   ├── config-builder/
 │   ├── config-validator/
 │   ├── feature-explorer/
+│   ├── runtime-detector/
 │   └── security-auditor/
 ├── agents/                  # Specialized agents
 │   └── config-architect.md
@@ -170,7 +171,7 @@ Usage scenarios
 
 This plugin depends on the [KrakenD MCP Server](https://github.com/krakend/mcp-server).
 
-Current version: **0.8.1**
+Current version: **0.8.2**
 
 ### Updating MCP Server Version
 
@@ -179,7 +180,7 @@ To update the required MCP server version:
 1. Edit `scripts/install-mcp.sh`:
 ```bash
 # Version of MCP server required by this plugin
-REQUIRED_MCP_VERSION="0.8.1"  # Update this
+REQUIRED_MCP_VERSION="0.8.2"  # Update this
 ```
 
 2. Update plugin version in `.claude-plugin/plugin.json`
@@ -303,7 +304,7 @@ Include:
 
 ### Logs and Debugging
 
-Installation logs: `~/.claude/plugins/krakend-ai-assistant/.install.log`
+Installation logs: `~/.claude/plugins/cache/krakend/krakend-ai-assistant/<version>/.install.log`
 
 Verbose installation:
 ```bash
@@ -328,7 +329,7 @@ Verbose installation:
 
 2. Create release notes
 
-3. Tag release: `git tag v0.8.1`
+3. Tag release: `git tag v0.8.2`
 
 4. Push: `git push && git push --tags`
 

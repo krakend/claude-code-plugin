@@ -3,8 +3,8 @@
 **Intelligent Claude Code plugin for KrakenD API Gateway with proactive Skills and Architecture Agent.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Plugin Version](https://img.shields.io/badge/Plugin-0.6.7-blue.svg)](https://github.com/krakend/claude-code-plugin)
-[![MCP Server](https://img.shields.io/badge/MCP%20Server-0.8.1-green.svg)](https://github.com/krakend/mcp-server)
+[![Plugin Version](https://img.shields.io/badge/Plugin-0.6.8-blue.svg)](https://github.com/krakend/claude-code-plugin)
+[![MCP Server](https://img.shields.io/badge/MCP%20Server-0.8.2-green.svg)](https://github.com/krakend/mcp-server)
 
 ## Overview
 
@@ -20,7 +20,7 @@ KrakenD AI Assistant is a powerful Claude Code plugin that brings intelligent Kr
 
 ## Features
 
-### 4 Proactive Skills
+### 5 Proactive Skills
 
 #### 1. **Config Validator**
 Auto-activates when you mention validation or have config issues.
@@ -54,6 +54,14 @@ You: "audit my config security"
 Skill: Comprehensive security analysis with actionable fixes
 ```
 
+#### 5. **Runtime Detector**
+Auto-activates when you want to run or test KrakenD.
+
+```
+You: "how do I run this config locally?"
+Skill: Detects native binary or Docker and gives the right command and image
+```
+
 ### 1 Specialized Agent
 
 #### **Config Architect Agent**
@@ -79,8 +87,19 @@ Install from the KrakenD marketplace or local development copy:
 /plugin add ~/Code/krakend/claude-code-plugin
 ```
 
+### Keeping the Plugin Updated
+
+Claude Code doesn't auto-update third-party marketplaces by default, so you will keep running the version you first installed. To get new releases automatically, open `/plugin`, go to **Marketplaces**, select `krakend` and choose **Enable auto-update**. New versions are picked up when Claude Code starts.
+
+To update manually instead:
+
+```bash
+claude plugin marketplace update krakend
+claude plugin update krakend-ai-assistant@krakend
+```
+
 The plugin will automatically:
-1. Download the KrakenD MCP Server v0.8.1 (fully offline-capable with embedded docs)
+1. Download the KrakenD MCP Server v0.8.2 (fully offline-capable with embedded docs)
 2. Verify checksums for security
 3. Install to the plugin directory
 4. Start the MCP server connection
@@ -135,7 +154,7 @@ You: "I need to design an API gateway for a microservices architecture with:
 
 This plugin provides an enhanced KrakenD experience through:
 
-1. **4 Proactive Skills** - Auto-activate when you need them
+1. **5 Proactive Skills** - Auto-activate when you need them
 2. **1 Architecture Agent** - Designs complex multi-service setups
 3. **[KrakenD MCP Server](https://github.com/krakend/mcp-server)** - Automatically managed, provides validation, generation, and documentation tools
 
@@ -154,15 +173,18 @@ Want to contribute or customize the plugin? See [CONTRIBUTING.md](CONTRIBUTING.m
 ### MCP Server Won't Start
 
 ```bash
+# The plugin is installed in a versioned folder; find yours
+ls ~/.claude/plugins/cache/krakend/krakend-ai-assistant/
+cd ~/.claude/plugins/cache/krakend/krakend-ai-assistant/<version>
+
 # Check if binary exists
-ls -la ~/.claude/plugins/krakend-ai-assistant/servers/krakend-mcp-server/
+ls -la servers/krakend-mcp-server/
 
 # Manually reinstall
-cd ~/.claude/plugins/krakend-ai-assistant
 ./scripts/install-mcp.sh --verbose
 
 # Check logs
-cat ~/.claude/plugins/krakend-ai-assistant/.install.log
+cat .install.log
 ```
 
 ### Version Mismatch
@@ -201,8 +223,8 @@ For security concerns, see [SECURITY.md](SECURITY.md).
 
 ---
 
-**Version**: 0.6.7
-**Features**: 4 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
+**Version**: 0.6.8
+**Features**: 5 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
 
 ---
 
