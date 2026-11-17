@@ -3,12 +3,19 @@
   "owner": {
     "name": "KrakenD"
   },
+  "description": "KrakenD API Gateway plugins for Claude Code: configuration assistance (validation, security audits, feature discovery) and Grafana dashboards for KrakenD metrics.",
   "plugins": [
     {
       "name": "krakend-ai-assistant",
-      "source": "./",
+      "source": "./plugins/krakend-ai-assistant",
       "description": "AI assistance for KrakenD API Gateway - validates configs, security audits, discovers features, and supports Flexible Configuration (CE & EE)",
       "version": "0.6.8"
+    },
+    {
+      "name": "krakend-observability",
+      "source": "./plugins/krakend-observability",
+      "description": "Generate and edit Grafana dashboards for KrakenD metrics from natural language. Bundles the Grafana MCP server (Docker) and a KrakenD dashboards skill.",
+      "version": "0.1.0"
     }
   ]
 }

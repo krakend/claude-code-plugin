@@ -27,9 +27,13 @@ cd claude-code-plugin
 
 2. Install the plugin locally in Claude Code:
 ```bash
-# In Claude Code
-/plugin add ~/path/to/claude-code-plugin
+# In Claude Code: add the clone as a marketplace, then install the plugins from it
+/plugin marketplace add ~/path/to/claude-code-plugin
+/plugin install krakend-ai-assistant@krakend
+/plugin install krakend-observability@krakend
 ```
+
+Plugins load from the clone, so edits apply after `/reload-plugins`.
 
 3. Test the plugin:
 ```bash
@@ -42,21 +46,38 @@ cd claude-code-plugin
 ```
 claude-code-plugin/
 ├── .claude-plugin/
-│   ├── plugin.json          # Plugin metadata and hooks
-│   └── marketplace.json     # Marketplace listing
-├── .mcp.json                # MCP server configuration
-├── skills/                  # 5 proactive skills
-│   ├── config-builder/
-│   ├── config-validator/
-│   ├── feature-explorer/
-│   ├── runtime-detector/
-│   └── security-auditor/
-├── agents/                  # Specialized agents
-│   └── config-architect.md
-├── scripts/
-│   └── install-mcp.sh       # MCP server installation
+│   └── marketplace.json             # Marketplace "krakend": lists both plugins
+├── plugins/
+│   ├── krakend-ai-assistant/
+│   │   ├── .claude-plugin/plugin.json   # Plugin metadata and hooks
+│   │   ├── .mcp.json                    # KrakenD MCP server
+│   │   ├── skills/                      # 5 proactive skills
+│   │   │   ├── config-builder/
+│   │   │   ├── config-validator/
+│   │   │   ├── feature-explorer/
+│   │   │   ├── runtime-detector/
+│   │   │   └── security-auditor/
+│   │   ├── agents/
+│   │   │   └── config-architect.md
+│   │   └── scripts/
+│   │       └── install-mcp.sh           # MCP server installation
+│   └── krakend-observability/
+│       ├── .claude-plugin/plugin.json   # Metadata, Grafana URL/token settings, dependency
+│       ├── .mcp.json                    # Grafana MCP server (Docker)
+│       ├── scripts/mcp-grafana.sh
+│       └── skills/krakend-dashboards/   # Skill, references, assets, scripts
 └── README.md
 ```
+
+Paths below are relative to the plugin folder (`plugins/krakend-ai-assistant/` unless stated).
+
+### Observability plugin data
+
+The observability plugin carries no KrakenD data. The metrics catalog, the PromQL recipes, the
+topic dashboard layouts and the dashboard linter live in the
+[KrakenD MCP Server](https://github.com/krakend/mcp-server) (`observability/` holds the editable
+sources), and the skill uses them through its tools. A change to metrics, recipes or layouts is an
+MCP server release plus a `REQUIRED_MCP_VERSION` bump in `krakend-ai-assistant`.
 
 ## Contributing to Skills
 
@@ -321,15 +342,16 @@ Verbose installation:
 
 ## Release Process
 
-1. Update version in:
-   - `.claude-plugin/plugin.json`
-   - `.claude-plugin/marketplace.json`
+1. Update the version of the plugin you release in:
+   - `plugins/<plugin>/.claude-plugin/plugin.json`
+   - `.claude-plugin/marketplace.json` (its entry)
    - `README.md`
-   - `scripts/install-mcp.sh` (REQUIRED_MCP_VERSION if needed)
+   - `plugins/krakend-ai-assistant/scripts/install-mcp.sh` (REQUIRED_MCP_VERSION if needed;
+     the observability tools need an MCP server version that has them)
 
 2. Create release notes
 
-3. Tag release: `git tag v0.8.2`
+3. Tag the release per plugin: `git tag krakend-ai-assistant-v0.6.9`, `git tag krakend-observability-v0.1.0`
 
 4. Push: `git push && git push --tags`
 
