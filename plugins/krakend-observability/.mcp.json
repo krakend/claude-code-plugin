@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "grafana": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/scripts/mcp-grafana.sh",
+      "args": [],
+      "env": {
+        "GRAFANA_URL": "${user_config.grafana_url}",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "${user_config.grafana_service_account_token}"
+      }
+    }
+  }
+}

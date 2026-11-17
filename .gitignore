@@ -34,3 +34,7 @@ build/
 # Test artifacts
 coverage/
 .nyc_output/
+
+# Python
+__pycache__/
+*.pyc

@@ -1,0 +1,38 @@
+{
+  "name": "krakend-observability",
+  "displayName": "KrakenD Observability",
+  "version": "0.1.0",
+  "description": "Generate and edit Grafana dashboards for KrakenD metrics from natural language. Bundles the Grafana MCP server (runs in Docker) and a KrakenD dashboards skill.",
+  "author": {
+    "name": "KrakenD",
+    "url": "https://www.krakend.io"
+  },
+  "homepage": "https://www.krakend.io/docs/telemetry/grafana/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "krakend",
+    "grafana",
+    "prometheus",
+    "opentelemetry",
+    "dashboards",
+    "observability"
+  ],
+  "dependencies": [
+    "krakend-ai-assistant@krakend"
+  ],
+  "userConfig": {
+    "grafana_url": {
+      "type": "string",
+      "title": "Grafana URL",
+      "description": "Base URL of your Grafana, as you open it in the browser (e.g. http://localhost:3000, https://grafana.example.com, https://<stack>.grafana.net).",
+      "required": true
+    },
+    "grafana_service_account_token": {
+      "type": "string",
+      "title": "Grafana service account token",
+      "description": "Token of a Grafana service account with the Editor role (Administration > Users and access > Service accounts).",
+      "required": true,
+      "sensitive": true
+    }
+  }
+}

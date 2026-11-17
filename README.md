@@ -1,10 +1,29 @@
-# KrakenD AI Assistant for Claude Code
+# KrakenD for Claude Code
 
-**Intelligent Claude Code plugin for KrakenD API Gateway with proactive Skills and Architecture Agent.**
+**Claude Code plugins for KrakenD API Gateway: configuration assistance, and Grafana dashboards from natural language.**
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Plugin Version](https://img.shields.io/badge/Plugin-0.6.8-blue.svg)](https://github.com/krakend/claude-code-plugin)
+[![AI Assistant](https://img.shields.io/badge/AI%20Assistant-0.6.8-blue.svg)](plugins/krakend-ai-assistant)
+[![Observability](https://img.shields.io/badge/Observability-0.1.0-blue.svg)](plugins/krakend-observability)
 [![MCP Server](https://img.shields.io/badge/MCP%20Server-0.8.2-green.svg)](https://github.com/krakend/mcp-server)
+
+## Plugins
+
+This repository is the `krakend` plugin marketplace. It contains two plugins:
+
+| Plugin | What it does |
+|---|---|
+| [`krakend-ai-assistant`](plugins/krakend-ai-assistant) | Validates configs, audits security, discovers features, builds configurations. Manages the [KrakenD MCP Server](https://github.com/krakend/mcp-server). |
+| [`krakend-observability`](plugins/krakend-observability) | Builds and edits Grafana dashboards for KrakenD metrics from natural language, and tells you which config options would give you more metrics. Requires Docker and a Grafana service account token. Depends on `krakend-ai-assistant`. |
+
+```bash
+/plugin marketplace add krakend/claude-code-plugin
+/plugin install krakend-ai-assistant@krakend
+/plugin install krakend-observability@krakend   # optional: Grafana dashboards
+```
+
+The rest of this page covers the AI Assistant. See the
+[Observability README](plugins/krakend-observability/README.md) for dashboards.
 
 ## Overview
 
@@ -76,15 +95,16 @@ Agent: Creates complete architecture with multiple endpoints, backends, and best
 
 ### Via Claude Code
 
-Install from the KrakenD marketplace or local development copy:
+Install from the KrakenD marketplace or a local development copy:
 
 ```bash
 # From KrakenD marketplace (recommended)
 /plugin marketplace add krakend/claude-code-plugin
-/plugin install krakend-ai-assistant
+/plugin install krakend-ai-assistant@krakend
 
-# From local (development)
-/plugin add ~/Code/krakend/claude-code-plugin
+# From a local clone (development): add the clone as a marketplace
+/plugin marketplace add ~/Code/krakend/claude-code-plugin
+/plugin install krakend-ai-assistant@krakend
 ```
 
 ### Keeping the Plugin Updated
@@ -96,6 +116,7 @@ To update manually instead:
 ```bash
 claude plugin marketplace update krakend
 claude plugin update krakend-ai-assistant@krakend
+claude plugin update krakend-observability@krakend   # if installed
 ```
 
 The plugin will automatically:
@@ -112,7 +133,7 @@ If you want to install the MCP server manually:
 
 ```bash
 # The plugin will handle this automatically, but you can also:
-cd ~/Code/krakend/claude-code-plugin
+cd ~/Code/krakend/claude-code-plugin/plugins/krakend-ai-assistant
 ./scripts/install-mcp.sh
 ```
 
@@ -223,8 +244,8 @@ For security concerns, see [SECURITY.md](SECURITY.md).
 
 ---
 
-**Version**: 0.6.8
-**Features**: 5 Proactive Skills + 1 Architecture Agent + Automatic MCP Management
+**AI Assistant**: 0.6.8 (5 Proactive Skills + 1 Architecture Agent + Automatic MCP Management)
+**Observability**: 0.1.0 (Grafana dashboards skill + Grafana MCP server)
 
 ---
 
