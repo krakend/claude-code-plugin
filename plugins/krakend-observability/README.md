@@ -19,7 +19,7 @@ KrakenD data yet, straight from the config) and import the saved JSON into produ
 | Component | What it does |
 |---|---|
 | `grafana` MCP server | Official [grafana/mcp-grafana](https://github.com/grafana/mcp-grafana) (pinned 2.2.0), run with Docker. Reads datasources, runs PromQL, creates and updates dashboards, renders panels. |
-| `krakend-dashboards` skill | The workflow: dashboard conventions (layout, units, portability), a layout script, a skeleton and an example dashboard. |
+| `krakend-dashboards` skill | The workflow: dashboard conventions (layout, units, portability), a layout script and a dashboard skeleton. |
 | Dependency: `krakend-ai-assistant` | KrakenD MCP server, which holds the KrakenD knowledge: metrics catalog, config analysis, tested PromQL recipes and topic layouts, and the dashboard linter (plus docs and config validation). Needs a version with the observability tools. Installed from the same marketplace. |
 
 ## Requirements
@@ -37,11 +37,11 @@ KrakenD data yet, straight from the config) and import the saved JSON into produ
 1. Install the plugin:
 
    ```bash
-   /plugin install krakend-observability --marketplace krakend/claude-code-plugin
+   /plugin marketplace add krakend/claude-code-plugin
+   /plugin install krakend-observability@krakend
    ```
 
-   (or `/plugin marketplace add krakend/claude-code-plugin` and then
-   `/plugin install krakend-observability@krakend`). Claude Code asks for:
+   `krakend-ai-assistant` is installed with it as a dependency. Claude Code asks for:
    - **Grafana URL**, as you open it in the browser (`http://localhost:3000`, `https://grafana.example.com`, Grafana Cloud). Local URLs are mapped for the Docker container automatically.
    - **Service account token** (stored in your system keychain, not in settings files).
 2. Restart Claude Code or run `/reload-plugins`. Check with `/mcp` that `grafana` is connected.
